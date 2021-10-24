@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import queryString from "query-string";
 import "./chat.css";
 import {io} from "socket.io-client";
-import {InfoBar} from "../index";
+import {InfoBar, Input} from "../index";
 
 let socket;
 
@@ -42,6 +42,7 @@ const Chat = ({location}) => {
 		<div className={"outerContainer"}>
 			<div className={"container"}>
 				<InfoBar room={room}/>
+				<Input message={message} setMessage={setMessage} sendMessage={sendMessage}/>
 			</div>
 		</div>
 	);
