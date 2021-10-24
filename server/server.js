@@ -1,6 +1,6 @@
 import express from "express";
 import {Server} from "socket.io";
-import http from "http";
+import {createServer} from "http";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import helmet from "helmet";
@@ -13,16 +13,20 @@ import indexRoutes from "./routes/router.js"
 // Initialization App
 const app = express();
 dotenv.config();
-const server = http.createServer(app);
-const io = new Server(server);
+const server = createServer(app);
+const io = new Server(server, {
+	cors: {
+		origin: process.env.URL
+	}
+});
 
 // Connect socket.io
-io.on("connection", (socket => {
+io.on("connection", (socket) => {
 	console.log("We have a new connection!!");
 	socket.on("disconnect", () => {
 		console.log("User had left!!");
 	});
-}));
+});
 
 // Middlewares
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
@@ -36,4 +40,4 @@ app.use("/", indexRoutes);
 
 // Server listen
 const PORT = process.env.PORT;
-server.listen(PORT, () =>console.log(`Server is running on port: ${PORT}`));
+server.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
