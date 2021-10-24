@@ -9,7 +9,7 @@ import cors from "cors";
 
 // Routes Imports
 import indexRoutes from "./routes/router.js"
-import {addUser, getUser} from "./controllers/user.js";
+import {addUser, getUser, removeUser} from "./controllers/user.js";
 
 // Initialization App
 const app = express();
@@ -29,7 +29,6 @@ io.on("connection", (socket) => {
 		// 	console.log(error);
 		// });
 		// if (error) return callback(error);
-		console.log("user: ", user)
 		socket.emit("message", {user: "admin", text: `${user.username}, welcome to the ${user.room} room!`});
 		socket.broadcast.to(user.room).emit("message", {user: "admin", text: `${user.username}, has joined!`});
 		socket.join(user.room);
@@ -41,7 +40,10 @@ io.on("connection", (socket) => {
 		// callback();
 	});
 	socket.on("disconnect", () => {
-		console.log("User had left!!");
+		const user = removeUser(socket.id);
+		if (user) {
+			io.to(user.room).emit("message", {user: "admin", test: `${user.username} has left.`});
+		}
 	});
 });
 
