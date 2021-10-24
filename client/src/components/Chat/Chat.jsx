@@ -16,6 +16,10 @@ const Chat = ({location}) => {
 		setUsername(username);
 		setRoom(room);
 		socket.emit("join", {username, room});
+		return () => {
+			socket.emit("disconnect");
+			socket.off();
+		};
 	}, [location.search, ENDPOINT]);
 
 	return (
