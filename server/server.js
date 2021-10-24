@@ -8,12 +8,21 @@ import morgan from "morgan";
 import cors from "cors";
 
 // Routes Imports
+import indexRoutes from "./routes/router.js"
 
 // Initialization App
 const app = express();
 dotenv.config();
 const server = http.createServer(app);
 const io = new Server(server);
+
+// Connect socket.io
+io.on("connection", (socket => {
+	console.log("We have a new connection!!");
+	socket.on("disconnect", () => {
+		console.log("User had left!!");
+	});
+}));
 
 // Middlewares
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
@@ -23,7 +32,7 @@ app.use(morgan("common"));
 app.use(cors());
 
 // Routes
-
+app.use("/", indexRoutes);
 
 // Server listen
 const PORT = process.env.PORT;
