@@ -23,6 +23,9 @@ const io = new Server(server, {
 // Connect socket.io
 io.on("connection", (socket) => {
 	console.log("We have a new connection!!");
+	socket.on("join", ({username, room}, callback) => {
+		console.log(username, room);
+	});
 	socket.on("disconnect", () => {
 		console.log("User had left!!");
 	});
