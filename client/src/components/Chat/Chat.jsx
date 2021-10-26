@@ -2,13 +2,14 @@ import {useEffect, useState} from "react";
 import queryString from "query-string";
 import "./chat.css";
 import {io} from "socket.io-client";
-import {InfoBar, Input, Messages} from "../index";
+import {InfoBar, Input, Messages, TextContainer} from "../index";
 
 let socket;
 
 const Chat = ({location}) => {
 	const [username, setUsername] = useState("");
 	const [room, setRoom] = useState("");
+	const [users, setUsers] = useState('');
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState([]);
 	const ENDPOINT = process.env.REACT_APP_ENDPOINT;
@@ -29,6 +30,10 @@ const Chat = ({location}) => {
 		socket.on("message", (message) => {
 			setMessages([...messages, message]);
 		});
+		socket.on("roomData", ({users}) => {
+			console.log(users)
+			setUsers(users);
+		});
 	}, [messages]);
 
 	const sendMessage = (e) => {
@@ -45,6 +50,7 @@ const Chat = ({location}) => {
 				<Messages messages={messages} username={username}/>
 				<Input message={message} setMessage={setMessage} sendMessage={sendMessage}/>
 			</div>
+			<TextContainer users={users}/>
 		</div>
 	);
 };
