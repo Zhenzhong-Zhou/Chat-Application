@@ -10,7 +10,6 @@ import cors from "cors";
 // Routes Imports
 import indexRoutes from "./routes/router.js"
 import {addUser, getUser, getUsersInRoom, removeUser} from "./controllers/user.js";
-import {use} from "express/lib/router";
 
 // Initialization App
 const app = express();
