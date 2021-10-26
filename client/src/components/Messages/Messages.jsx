@@ -4,7 +4,7 @@ import "./messages.css";
 
 const Messages = ({messages, username}) => {
 	return (
-		<BasicScrollToBottom>
+		<BasicScrollToBottom className={"messages"}>
 			{messages.map((message, index) => (
 				<div key={index}>
 					<Message message={message} username={username}/>
