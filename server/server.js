@@ -17,7 +17,7 @@ dotenv.config();
 const server = createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: process.env.REMOTE_URL,
+		origin: process.env.URL,
 		methods: ["GET", "POST"]
 	}
 });

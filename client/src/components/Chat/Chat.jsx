@@ -12,7 +12,7 @@ const Chat = ({location}) => {
 	const [users, setUsers] = useState('');
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState([]);
-	const ENDPOINT = process.env.REACT_APP_REMOTE_ENDPOINT;
+	const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 
 	useEffect(() => {
 		const {username, room} = queryString.parse(location.search);
@@ -39,6 +39,7 @@ const Chat = ({location}) => {
 		e.preventDefault();
 		if (message) {
 			socket.emit("sendMessage", message, () => setMessage(""));
+			setMessage("");
 		}
 	};
 
