@@ -9,7 +9,8 @@ import cors from "cors";
 
 // Routes Imports
 import indexRoutes from "./routes/router.js"
-import {addUser, getUser, removeUser} from "./controllers/user.js";
+import {addUser, getUser, getUsersInRoom, removeUser} from "./controllers/user.js";
+import {use} from "express/lib/router";
 
 // Initialization App
 const app = express();
@@ -32,11 +33,13 @@ io.on("connection", (socket) => {
 		socket.emit("message", {user: "admin", text: `${user.username}, welcome to the ${user.room} room!`});
 		socket.broadcast.to(user.room).emit("message", {user: "admin", text: `${user.username}, has joined!`});
 		socket.join(user.room);
+		io.to(user.room).emit("roomData", {room: user.room, users: getUsersInRoom(user.room)});
 		// callback();
 	});
 	socket.on("sendMessage", (message, callback) => {
 		const user = getUser(socket.id);
 		io.to(user.room).emit("message", {user: user.username, text: message});
+		io.to(user.room).emit("roomData", {room: user.room, text: message});
 		// callback();
 	});
 	socket.on("disconnect", () => {
