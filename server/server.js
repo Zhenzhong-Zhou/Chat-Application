@@ -17,36 +17,9 @@ dotenv.config();
 const server = createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: process.env.REMOTE_URL
+		origin: process.env.REMOTE_URL,
+		methods: ["GET", "POST"]
 	}
-});
-
-// Connect socket.io
-io.on("connection", (socket) => {
-	socket.on("join", ({username, room}, callback) => {
-		const {error, user} = addUser({id: socket.id, username, room});
-		// socket.on("error", () => {
-		// 	console.log(error);
-		// });
-		// if (error) return callback(error);
-		socket.emit("message", {user: "admin", text: `${user.username}, welcome to the ${user.room} room!`});
-		socket.broadcast.to(user.room).emit("message", {user: "admin", text: `${user.username}, has joined!`});
-		socket.join(user.room);
-		io.to(user.room).emit("roomData", {room: user.room, users: getUsersInRoom(user.room)});
-		// callback();
-	});
-	socket.on("sendMessage", (message, callback) => {
-		const user = getUser(socket.id);
-		io.to(user.room).emit("message", {user: user.username, text: message});
-		io.to(user.room).emit("roomData", {room: user.room, text: message});
-		// callback();
-	});
-	socket.on("disconnect", () => {
-		const user = removeUser(socket.id);
-		if (user) {
-			io.to(user.room).emit("message", {user: "admin", test: `${user.username} has left.`});
-		}
-	});
 });
 
 // Middlewares
@@ -58,6 +31,30 @@ app.use(cors());
 
 // Routes
 app.use("/", indexRoutes);
+
+
+// Connect socket.io
+io.on("connection", (socket) => {
+	socket.on("join", ({username, room}) => {
+		const {error, user} = addUser({id: socket.id, username, room});
+		socket.emit("message", {user: "admin", text: `${user.username}, welcome to the ${user.room} room!`});
+		socket.broadcast.to(user.room).emit("message", {user: "admin", text: `${user.username}, has joined!`});
+		socket.join(user.room);
+		io.to(user.room).emit("roomData", {room: user.room, users: getUsersInRoom(user.room)});
+	});
+	socket.on("sendMessage", (message) => {
+		const user = getUser(socket.id);
+		io.to(user.room).emit("message", {user: user.username, text: message});
+		io.to(user.room).emit("roomData", {room: user.room, text: message});
+	});
+	socket.on("disconnect", () => {
+		const user = removeUser(socket.id);
+		if (user) {
+			io.to(user.room).emit("message", {user: "admin", test: `${user.username} has left.`});
+		}
+	});
+});
+
 
 // Server listen
 const PORT = process.env.PORT;
