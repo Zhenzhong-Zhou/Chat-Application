@@ -12,7 +12,7 @@ const Chat = ({location}) => {
 	const [users, setUsers] = useState('');
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState([]);
-	const ENDPOINT = process.env.REACT_APP_ENDPOINT;
+	const ENDPOINT = process.env.REACT_APP_REMOTE_ENDPOINT;
 
 	useEffect(() => {
 		const {username, room} = queryString.parse(location.search);
